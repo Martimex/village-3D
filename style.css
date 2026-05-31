@@ -1,0 +1,13 @@
+/* Remove default browser styling */
+*, *:before, *:after {
+	margin: 0;
+	padding: 0;
+}
+
+/* Make sure the canvas element is always covering the viewport, even when user scrolls */
+canvas#webgl-canvas {
+	position: fixed;
+	top: 0;
+	left: 0;
+	outline: none;
+}
