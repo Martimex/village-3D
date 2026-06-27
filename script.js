@@ -1,7 +1,9 @@
 import * as THREE from "three";
 import GUI from "lil-gui";
-import { OrbitControls } from "three/examples/jsm/Addons.js";
+import { OrbitControls, TextGeometry } from "three/examples/jsm/Addons.js";
+import { FontLoader } from "three/examples/jsm/Addons.js";
 import _Create from "./helpers/create.js";
+import _LOAD from "./helpers/load.js";
 
 // HOOK FOR HTML CANVAS ELEMENT
 const CANVAS_EL = document.querySelector('canvas#webgl-canvas');
@@ -39,6 +41,38 @@ window.addEventListener('dblclick', () => {
 		else if(document.webkitExitFullscreen) document.webkitExitFullscreen();
 	}
 });
+
+// Loaders
+
+const matcapTexture = _LOAD.textMatcap();
+const fontLoader = new FontLoader();
+const text_Size = 0.75;
+fontLoader.load("./fonts/Bruno_Ace_SC_Regular.json",
+	(font) => {
+		const textGeometry = new TextGeometry(
+			"M-DEV",
+			{
+				font: font,
+				size: text_Size,
+				depth: 0.2,
+				curveSegments: 12,
+				bevelEnabled: true,
+				bevelThickness: 0.03,
+				bevelSize: 0.02,
+				bevelOffset: 0,
+				bevelSegments: 5,
+			}
+		);
+		textGeometry.center();
+		const textMaterial = new THREE.MeshMatcapMaterial({ matcap: matcapTexture, color: "#ccc" });
+		const text = new THREE.Mesh(textGeometry, textMaterial);
+		text.position.x = 9;
+		text.position.z = 11.5;
+		text.position.y = text_Size;
+		scene.add(text);
+	}
+)
+
 	
 // Initialize the scene and groups
 const scene = new THREE.Scene();
@@ -84,22 +118,14 @@ _Create.minifence(minifence_Group);
 _Create.pool(pool_Group);
 _Create.sandbox(sandbox_Group);
 
-// CREATE:
-// 1. Bushes on sides of house2 green doors (house2) ✅
-// 2. Torchlight on the wall next to the blue door (house2)
-// 3. Maybe another floralbow for a better effect (floralbow) ✅
-// 4. Add a vase between the garden and floralbow - use LatheGeometry ✅
-// 5. Another torchlight above the house1 door (house1)
-// 6. Text "MDEV" in the free spot around house2
-
 
 // Lights
 const ambientLight = new THREE.AmbientLight(0xffffff, 1);
 scene.add(ambientLight);
 	
 const camera = new THREE.PerspectiveCamera(75, SIZES.WIDTH / SIZES.HEIGHT, 1, 100);
-camera.position.z = 3; // Initially put camera backwards to create some distance between the camera and object
-camera.position.y = 3;
+camera.position.z = 20; // Initially put camera backwards to create some distance between the camera and object
+camera.position.y = 4;
 scene.add(camera);
 	
 const renderer = new THREE.WebGLRenderer({
